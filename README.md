@@ -67,10 +67,15 @@ Each sentences in the dataloader is padded with padding tokens to match the maxi
 
 While calculating loss and accuracy, the padding tokens are ignored to output valid score with respect to the dataset provided. 
 
-# ** Training **
+# Training 
 The trained model achives an accuracy of 94.28% on training set and 93.8% on test set. 
+For tensorboard visualization, 
+'' python 
+pip install tensorboard
+tensorboard --logdir=runs
+''
 
-![](images/training-testing.png)
+![](images/trainiing-testing.png)
 
 ## Directory Structure
 
