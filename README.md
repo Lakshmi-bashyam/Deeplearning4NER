@@ -17,7 +17,7 @@ And producing an annotated block of text that highlights the names of entities:
 
 In this example, a person name consisting of one token, a two-token company name and a temporal expression have been detected and classified. Here is another example:
 
-!(images/Named-entity-recognition-Paralleldots.jpg)
+![](images/Named-entity-recognition-Paralleldots.jpg)
 
 In this project, we explore the problem of Named Entity Recognition tagging of sentences. The task is to tag each token in a given sentence with an appropriate tag such as Person, Location, etc.
 
@@ -76,7 +76,7 @@ tensorboard --logdir=runs
 `
 
 ![](images/Accuracy.png)
-![]('images/F1 score.png')
+![](images/F1_score.png)
 ![](images/Loss.png)
 
 ## Directory Structure
