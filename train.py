@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
@@ -11,8 +12,9 @@ torch.manual_seed(1)
 
 def train(model, iterator, optimizer):
     model.train()
-    running_loss = 0
-    running_acc = 0
+    running_loss = 0.0
+    running_acc = 0.0
+    running_f1 = 0.0
 
     for words, labels, lens in iterator:
         words, labels = words.to(device), labels.to(device)
@@ -21,7 +23,7 @@ def train(model, iterator, optimizer):
         pred = model(words.long(), hidden)
         loss = loss_fn(pred, labels)
         #compute the binary accuracy
-        acc = accuracy(pred, labels)
+        (acc, f1) = accuracy(pred, labels)
 
         #backpropage the loss and compute the gradients
         loss.backward()       
@@ -30,12 +32,14 @@ def train(model, iterator, optimizer):
         optimizer.step()      
         running_loss += loss.item()
         running_acc += acc
+        running_f1 += f1
     
-    return running_loss/len(iterator), running_acc/len(iterator)
+    return running_loss/len(iterator), running_acc/len(iterator), running_f1/len(iterator)
 
 def test(model, iterator):
-    running_loss = 0
-    running_acc = 0
+    running_loss = 0.0
+    running_acc = 0.0
+    running_f1 = 0.0
     with torch.no_grad():
         for words, labels, lens in iterator:
             words, labels = words.to(device), labels.to(device)
@@ -43,11 +47,13 @@ def test(model, iterator):
             pred = model(words.long(), hidden)
             loss = loss_fn(pred, labels)
             #compute the binary accuracy
-            acc = accuracy(pred, labels) 
+            (acc, f1) = accuracy(pred, labels) 
 
             running_loss += loss.item()
             running_acc += acc
-    return running_loss/len(iterator), running_acc/len(iterator)
+            running_f1 += f1
+
+    return running_loss/len(iterator), running_acc/len(iterator), running_f1/len(iterator)
 
 
 if __name__ == '__main__':
@@ -78,39 +84,45 @@ if __name__ == '__main__':
     # Define structures for loss, accuracy values 
     training_loss = []
     training_acc = []
+    training_f1 = []
     validation_loss = []
     validation_acc = []
+    validation_f1 = []
     
     for e in range(EPOCH):
         hidden = model.init_hidden(BATCH_SIZE) 
 
         # Training and saving the parameters
-        train_loss, train_acc = train(model, train_loader, optimizer)
+        train_loss, train_acc, train_f1 = train(model, train_loader, optimizer)
 
         # Testing on test dataset
-        val_loss, val_acc = test(model, val_loader)
+        val_loss, val_acc, val_f1 = test(model, val_loader)
 
-        print("Epoch {} - Training loss: {} - Training accuracy: {}".format(e, train_loss, train_acc))
+        print("Epoch {} - Training loss: {} - Training accuracy: {} Training F1: {}".format(e, train_loss, train_acc, train_f1))
         training_loss.append(train_loss) 
         training_acc.append(train_acc)  
+        training_f1.append(train_f1)
         writer.add_scalar('Loss/train', train_loss, e)
         writer.add_scalar('Accuracy/train', train_acc, e)
+        writer.add_scalar('F1/train', train_f1, e)
 
 
-        print("Epoch {} - Validation loss: {} - Validation accuracy: {}".format(e, val_loss, val_acc))
+        print("Epoch {} - Validation loss: {} - Validation accuracy: {}, Validation F1: {}".format(e, val_loss, val_acc, val_f1))
         validation_loss.append(val_loss) 
         validation_acc.append(val_acc)
+        validation_f1.append(val_f1)
         writer.add_scalar('Loss/test', val_loss, e)
         writer.add_scalar('Accuracy/test', val_acc, e)
+        writer.add_scalar('F1/test', val_f1, e)
 
     PATH = './ner_model.pth'
     torch.save(model.state_dict(), PATH)
 
     # Test on testing data
     test_dataset = NERDataset('data', vocab, type='/test')
-    test_loader = DataLoader(test_dataset, batch_size=128, num_workers=2, collate_fn=custom_collate, shuffle=True)
-    test_loss, test_acc = test(model, test_loader)
-    print("Testing loss: {} - Testing accuracy: {}".format(test_loss, test_acc))
+    test_loader = DataLoader(test_dataset, batch_size=1024, num_workers=2, collate_fn=custom_collate, shuffle=True)
+    test_loss, test_acc, test_f1 = test(model, test_loader)
+    print("Testing loss: {} - Testing accuracy: {}, Testing F1: {}".format(test_loss, test_acc, test_f1))
 
 
 

@@ -47,7 +47,6 @@ class RNN(nn.Module):
 
     def init_hidden(self, batch_size):
         weight = next(self.parameters()).data
-        # import pdb; pdb.set_trace()
         return (Variable(weight.new(self.n_layers, batch_size, self.hidden_dim).uniform_()),
                 Variable(weight.new(self.n_layers, batch_size, self.hidden_dim).uniform_()))
 
@@ -74,7 +73,5 @@ if __name__ == "__main__":
     
     loss = loss_fn(tag_scores, sample_target)
     print(loss.item())
-    acc = accuracy(tag_scores, sample_target)
-    print(acc)
-
-    # optimizer = optim.SGD(model.parameters(), lr=0.1)
+    acc, f1 = accuracy(tag_scores, sample_target)
+    print(acc, f1)

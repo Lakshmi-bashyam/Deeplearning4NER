@@ -17,7 +17,7 @@ And producing an annotated block of text that highlights the names of entities:
 
 In this example, a person name consisting of one token, a two-token company name and a temporal expression have been detected and classified. Here is another example:
 
-![](images/Named-entity-recognition-Paralleldots.jpg)
+!(images/Named-entity-recognition-Paralleldots.jpg =50x50)
 
 In this project, we explore the problem of Named Entity Recognition tagging of sentences. The task is to tag each token in a given sentence with an appropriate tag such as Person, Location, etc.
 
@@ -68,14 +68,16 @@ Each sentences in the dataloader is padded with padding tokens to match the maxi
 While calculating loss and accuracy, the padding tokens are ignored to output valid score with respect to the dataset provided. 
 
 # Training 
-The trained model achives an accuracy of 94.28% on training set and 93.8% on test set. 
-For tensorboard visualization, 
-'' python 
-pip install tensorboard
-tensorboard --logdir=runs
-''
+The trained model achives an accuracy of 94.28% on training set and 94.0% on test set and Weighted F1 score of 0.946 on training set and 0.944 on test set.
 
-![](images/trainiing-testing.png)
+For tensorboard visualization, 
+` pip install tensorboard
+tensorboard --logdir=runs
+`
+
+![](images/Accuracy.png)
+![](images/F1 score.png)
+![](images/Loss.png)
 
 ## Directory Structure
 

@@ -1,4 +1,5 @@
 import torch
+from sklearn.metrics import accuracy_score, f1_score
 
 def accuracy(preds, labels):
 
@@ -10,12 +11,14 @@ def accuracy(preds, labels):
     pred_class = preds.argmax(dim=1)
 
     #mask out 'PAD' tokens
-    mask = (labels > 0).float()
+    mask = labels > 0
 
-    correct_class = ((pred_class == labels) * mask)
-    acc = int(correct_class.sum()) / int(torch.sum(mask).item())
+    pred_class = pred_class[mask].cpu()
+    labels = labels[mask].cpu()
+    acc = accuracy_score(pred_class, labels)
+    f1 = f1_score(pred_class, labels, average="weighted")
     
-    return acc
+    return float(acc), float(f1)
 
 
 def loss_fn(outputs, labels):

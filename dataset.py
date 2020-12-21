@@ -86,13 +86,3 @@ def custom_collate(batch):
 
     return data_pad, label_pad, max(lens)
 
-if __name__ == "__main__":
-
-    vocab = build_vocab('data')
-    train_dataset = NERDataset('data', vocab, type='/train')
-    train_loader = DataLoader(train_dataset, batch_size=128, num_workers=2, collate_fn=custom_collate)
-
-    for word, tag, lens in train_loader:
-        print(lens)
-        print(len(word[0]))
-        break
