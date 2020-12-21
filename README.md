@@ -89,6 +89,8 @@ Environment: python 3
 Requirements:
 ```python
 pytorch
+tensorboard
+sklearn
 ```
 running example:
 ```python
